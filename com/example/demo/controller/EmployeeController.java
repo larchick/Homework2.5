@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Employee;
 import com.example.demo.service.EmployeeService;
+import com.example.demo.validator.EmployeeValidator;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,8 +21,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/add")
-    public Employee addEmployee(@RequestParam String firstName, @RequestParam String lastName, @RequestParam Integer salary, @RequestParam Integer departmentId) {
-        return service.addEmployee(firstName, lastName, salary, departmentId);
+    public ResponseEntity<Employee> addEmployee(@RequestParam String firstName, @RequestParam String lastName, @RequestParam Integer salary, @RequestParam Integer departmentId) {
+        if (EmployeeValidator.validate(firstName, lastName)) {
+            return ResponseEntity.ok(service.addEmployee(firstName, lastName, salary, departmentId));
+        }else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 
